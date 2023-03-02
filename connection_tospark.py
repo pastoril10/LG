@@ -15,3 +15,5 @@ s3 = boto3.resource(
 
 for obj in s3.Bucket('lead-generation-data-raw').objects.all():
     print(obj)
+
+

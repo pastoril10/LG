@@ -36,7 +36,7 @@ df.cache()
 
 df.write.mode("overwrite")\
         .format("parquet")\
-        .partitionBy("CNAE")\
+        .partitionBy("CNAE PRINCIPAL")\
         .save("s3a://lead-generation-data-raw/empresas_RF.parquet")
 
 

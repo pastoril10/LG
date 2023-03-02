@@ -52,7 +52,6 @@ def tratar_socios():
                                           .withColumn("QUALIFICACAO DO SOCIO", regexp_replace("QUALIFICACAO DO SOCIO", "Fsica", "FISICA"))
                                           
                                 
-
   socios = socios.join(qualificacao_socios, ["COD QUALIFICACAO SOCIO"])\
                   .withColumn("CNPJ BASICO", lpad(col("CNPJ BASICO"), 8, "0"))\
                   .withColumn("DT ENTRADA NA SOCIEDADE", to_date(col("DT ENTRADA NA SOCIEDADE"), "yyyyMMdd"))\
