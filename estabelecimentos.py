@@ -102,3 +102,12 @@ def tratar_estabelecimentos():
                                                       'MUNICIPIO', 'DESCRICAO','SETOR', "CNAE - DESCRICAO"])
   return estabelecimentos_ativos
 
+df = tratar_estabelecimentos()
+
+#partitionBy() control number of partitions
+df.write.option("header",True) \
+        .option("maxRecordsPerFile", 10) \
+        .partitionBy("UF", "MUNICIPIO") \
+        .mode("overwrite") \
+        .format("parquet")\
+        .save("/media/pastoril/74A86D55A86D16C0/ReceitaFederal/")
