@@ -19,6 +19,7 @@ def build_new_spark_session(app_name) -> SparkSession:
      SparkSession\
     .builder \
     .appName(app_name)\
+    .master("local[*]") \
     .config("spark.hadoop.fs.s3a.access.key", acess_key)\
     .config("spark.hadoop.fs.s3a.secret.key", secret_key)\
     .config("spark.hadoop.fs.s3a.path.style.access", "true") \
