@@ -41,6 +41,7 @@ def tratar_estabelecimentos():
                         StructField("DATA SIT FISCAL", DateType(), True),
                       ])
 
+
   # path = ["./data/estabelecimento"+ str(i) + ".csv" for i in range(1, 4)]
 
   path = ["s3a://lead-generation-data-raw/Estabelecimentos"+ str(i) +".csv" for i in range(10)]
@@ -104,10 +105,11 @@ def tratar_estabelecimentos():
 
 df = tratar_estabelecimentos()
 
+df_UF = df.repartition("UF", "MUNICIPIO")
+
 #partitionBy() control number of partitions
-df.write.option("header",True) \
-        .option("maxRecordsPerFile", 10) \
-        .partitionBy("UF", "MUNICIPIO") \
-        .mode("overwrite") \
+df_UF.write.option("maxRecordsPerFile", 10) \
+        .partitionBy("UF","MUNICIPIO") \
+        .mode("append") \
         .format("parquet")\
         .save("/media/pastoril/74A86D55A86D16C0/ReceitaFederal/")
