@@ -37,6 +37,31 @@ def tratar_empresas():
                                         .schema(StructType([StructField("COD NATUREZA JURIDICA", ShortType(), True),
                                                         StructField("NATUREZA JURIDICA", StringType(), True)]))\
                                         .csv("s3a://lead-generation-data-raw/Naturezas.csv")
+        
+        natureza_juridica = natureza_juridica.withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "�",""))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Empresria","EMPRESARIA"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Associao","Associacao"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "rgo","Orgao"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Direo","Direcao"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Fundao","Fundacao"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Condomnio","Condominio"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Inovao","Inovacao"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Pblico","Condominio"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Cartrio","Cartorio"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Participao","Participacao"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Consrcio","Consorcio"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Annima","Anonima"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Servio","Servico"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Edilcio","Edilicio"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Municpio","Municipio"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Organizao","Organizacao"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Jurdico","Juridico"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Representao","Representacao"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Fsica","Fisica"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Judicirio","Judiciario"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Comit","Comite"))\
+                        .withColumn("NATUREZA JURIDICA", regexp_replace("NATUREZA JURIDICA", "Poltico","Politico"))\
+
 
         empresas = empresas.join(qualificacao_socios, ["COD QUALIFICACAO SOCIO"])\
                                 .join(natureza_juridica, ["COD NATUREZA JURIDICA"])

@@ -22,20 +22,27 @@ def build_new_spark_session(app_name) -> SparkSession:
     .master("local[*]") \
     .config("spark.hadoop.fs.s3a.access.key", acess_key)\
     .config("spark.hadoop.fs.s3a.secret.key", secret_key)\
-    .config("spark.hadoop.fs.s3a.path.style.access", "true") \
-    .config("spark.hadoop.fs.s3a.fast.upload", "true") \
+    .config("spark.hadoop.fs.s3a.path.style.access", 'true') \
+    .config("spark.hadoop.fs.s3a.fast.upload", 'true') \
     .config("spark.hadoop.fs.s3a.multipart.size", 104857600) \
-    .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
     .config('spark.hadoop.fs.s3a.aws.credentials.provider','org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider') \
-    .config("spark.memory.offHeap.enabled", "true")\
-    .config("spark.memory.offHeap.size","14g")\
-    .config("spark.memory.fraction", 0.8)\
-    .config("spark.executor.memory","14g")\
-    .config("spark.driver.memory","14g")\
-    .config('spark.driver.maxResultSize', '12g')\
-    .config("spark.sql.shuffle.partitions", 800)\
+    .config("spark.sql.extensions","io.delta.sql.DeltaSparkSessionExtension") \
+    .config("spark.sql.catalog.spark_catalog","org.apache.spark.sql.delta.catalog.DeltaCatalog") \
+    .config("spark.delta.logStore.class","org.apache.spark.sql.delta.storage.S3SingleDriverLogStore") \
+    .config("spark.hadoop.fs.s3a.impl","org.apache.hadoop.fs.s3a.S3AFileSystem") \
+    .config("spark.sql.parquet.int96RebaseModeInWrite","LEGACY")\
+    .config("spark.sql.parquet.fs.optimized.committer.optimization-enabled",'true')\
+    .config("spark.sql.inMemoryColumnarStorage.compressed", 'true')\
+    .config("spark.memory.fraction",0.2)\
+    .config("spark.executor.memory","16g")\
+    .config("spark.driver.memory","16g")\
+    .config('spark.driver.maxResultSize', '16g')\
+    .config("spark.sql.shuffle.partitions",900)\
+    .config("spark.memory.offHeap.enabled",'true')\
+    .config("spark.memory.offHeap.size","16g")\
+    .enableHiveSupport() \
     .getOrCreate()
-
+ 
     # .master("local[*]") \
     # .config("hive.metastore.uris", "thrift://84.46.240.25:9083")\
     # .config("spark.sql.warehouse.dir", "/tmp/spark-warehouse" )\

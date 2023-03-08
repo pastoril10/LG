@@ -42,16 +42,20 @@ def tratar_socios():
                                                       StructField("QUALIFICACAO DO SOCIO", StringType(), True)]))\
                                   .csv("s3a://lead-generation-data-raw/Qualificacoes.csv")
 
-  qualificacao_socios = qualificacao_socios.withColumn("QUALIFICACAO DO SOCIO", regexp_replace("QUALIFICACAO DO SOCIO", "Scio","SOCIO"))\
+  qualificacao_socios = qualificacao_socios.withColumn("QUALIFICACAO DO SOCIO", regexp_replace("QUALIFICACAO DO SOCIO", "�",""))\
+                                          .withColumn("QUALIFICACAO DO SOCIO", regexp_replace("QUALIFICACAO DO SOCIO", "Scio","SOCIO"))\
                                           .withColumn("QUALIFICACAO DO SOCIO", regexp_replace("QUALIFICACAO DO SOCIO", "nan","NAO INFORMADO"))\
                                           .withColumn("QUALIFICACAO DO SOCIO", regexp_replace("QUALIFICACAO DO SOCIO", 'No informada', "NAO INFORMADO"))\
                                           .withColumn("QUALIFICACAO DO SOCIO", regexp_replace("QUALIFICACAO DO SOCIO", "Fsica", "FISICA"))\
                                           .withColumn("QUALIFICACAO DO SOCIO", regexp_replace("QUALIFICACAO DO SOCIO", "Indstria", "INDRUSTRIA"))\
                                           .withColumn("QUALIFICACAO DO SOCIO", regexp_replace("QUALIFICACAO DO SOCIO", "Comanditrio", "COMANDITADO"))\
                                           .withColumn("QUALIFICACAO DO SOCIO", regexp_replace("QUALIFICACAO DO SOCIO", "jurdica", "JURIDICA"))\
-                                          .withColumn("QUALIFICACAO DO SOCIO", regexp_replace("QUALIFICACAO DO SOCIO", "Fsica", "FISICA"))
-                                          
-                                
+                                          .withColumn("QUALIFICACAO DO SOCIO", regexp_replace("QUALIFICACAO DO SOCIO", "Fsica", "FISICA"))\
+                                          .withColumn("QUALIFICACAO DO SOCIO", regexp_replace("QUALIFICACAO DO SOCIO", "Administrao", "Administracao"))\
+                                          .withColumn("QUALIFICACAO DO SOCIO", regexp_replace("QUALIFICACAO DO SOCIO", "Secretario", "Secretario"))\
+                                          .withColumn("QUALIFICACAO DO SOCIO", upper(col("QUALIFICACAO DO SOCIO")))
+
+                                                
   socios = socios.join(qualificacao_socios, ["COD QUALIFICACAO SOCIO"])\
                   .withColumn("CNPJ BASICO", lpad(col("CNPJ BASICO"), 8, "0"))\
                   .withColumn("DT ENTRADA NA SOCIEDADE", to_date(col("DT ENTRADA NA SOCIEDADE"), "yyyyMMdd"))\
@@ -69,7 +73,10 @@ def tratar_socios():
                               .when(socios["COD FAIXA ETARIA"] == 7, "61 - 70 ANOS")\
                               .when(socios["COD FAIXA ETARIA"] == 8, "71 - 80 ANOS")\
                               .when(socios["COD FAIXA ETARIA"] == 9, "MAIS DE 80 ANOS")\
-                              .when(socios["COD FAIXA ETARIA"] == 0, "NÃO SE APLICA"))
+                              .when(socios["COD FAIXA ETARIA"] == 0, "NÃO SE APLICA"))\
+                  .withColumn('DT ENTRADA NA SOCIEDADE', when(col('DT ENTRADA NA SOCIEDADE')<='1900-01-01',\
+                                                  to_date(lit('1900-01-01'),'yyyyMMdd')) \
+                                                  .otherwise(col('DT ENTRADA NA SOCIEDADE')))
 
 
   socios = socios.select(["CNPJ BASICO", "NOME SOCIO", "CNPJ/CPF DO SOCIO", "DT ENTRADA NA SOCIEDADE", \
